@@ -21,6 +21,9 @@ const state = {
     }
 };
 
+// Make state globally accessible for sync module
+window.state = state;
+
 // ===== LocalStorage Keys =====
 const STORAGE_KEYS = {
     CHECKLIST: 'aozu_checklist',
@@ -42,6 +45,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     initTemplateForm();
     initInsightTabs();
     renderCurrentPage();
+
+    // Initialize authentication
+    if (typeof initAuth === 'function') {
+        initAuth();
+    }
 });
 
 // ===== Data Loading =====
@@ -227,6 +235,10 @@ function renderRules() {
             }
 
             localStorage.setItem(STORAGE_KEYS.RULES_CHECKED, JSON.stringify(checked));
+            // Sync to cloud
+            if (typeof saveToCloud === 'function') {
+                saveToCloud('rulesChecked', checked);
+            }
             e.target.closest('.rule-item').classList.toggle('checked', e.target.checked);
         });
     });
@@ -243,6 +255,10 @@ function initChecklist() {
         checkbox.addEventListener('change', () => {
             saved[key] = checkbox.checked;
             localStorage.setItem(STORAGE_KEYS.CHECKLIST, JSON.stringify(saved));
+            // Sync to cloud
+            if (typeof saveToCloud === 'function') {
+                saveToCloud('checklist', saved);
+            }
         });
     });
 
@@ -267,6 +283,10 @@ function initNotes() {
     // Auto-save on input
     textarea.addEventListener('input', debounce(() => {
         localStorage.setItem(STORAGE_KEYS.NOTES, textarea.value);
+        // Sync to cloud
+        if (typeof saveToCloud === 'function') {
+            saveToCloud('notes', textarea.value);
+        }
     }, 500));
 }
 
@@ -463,6 +483,10 @@ function deleteTemplate(id) {
 
     state.userTemplates = state.userTemplates.filter(t => t.id !== id);
     localStorage.setItem(STORAGE_KEYS.USER_TEMPLATES, JSON.stringify(state.userTemplates));
+    // Sync to cloud
+    if (typeof saveToCloud === 'function') {
+        saveToCloud('userTemplates', state.userTemplates);
+    }
     renderTemplates();
     showToast('テンプレートを削除しました');
 }
@@ -537,6 +561,10 @@ function initTemplateForm() {
 
         state.userTemplates.push(newTemplate);
         localStorage.setItem(STORAGE_KEYS.USER_TEMPLATES, JSON.stringify(state.userTemplates));
+        // Sync to cloud
+        if (typeof saveToCloud === 'function') {
+            saveToCloud('userTemplates', state.userTemplates);
+        }
 
         form.reset();
         form.classList.add('hidden');
@@ -696,6 +724,10 @@ function initLearningForm() {
 
         state.learningLogs.unshift(entry);
         localStorage.setItem(STORAGE_KEYS.LEARNING_LOGS, JSON.stringify(state.learningLogs));
+        // Sync to cloud
+        if (typeof saveToCloud === 'function') {
+            saveToCloud('learningLogs', state.learningLogs);
+        }
 
         form.reset();
         dateInput.value = new Date().toISOString().split('T')[0];
@@ -757,6 +789,10 @@ function deleteLog(id) {
 
     state.learningLogs = state.learningLogs.filter(log => log.id !== id);
     localStorage.setItem(STORAGE_KEYS.LEARNING_LOGS, JSON.stringify(state.learningLogs));
+    // Sync to cloud
+    if (typeof saveToCloud === 'function') {
+        saveToCloud('learningLogs', state.learningLogs);
+    }
     renderLearningLogs();
     showToast('削除しました');
 }
