@@ -27,39 +27,27 @@ function initAuth() {
         })
         .catch((error) => {
             console.error('Persistence error:', error);
+            showToast('設定エラー: ' + error.code);
         });
 
     const provider = new firebase.auth.GoogleAuthProvider();
-    // Use device language for auth flow
     auth.useDeviceLanguage();
-
-    // Add scopes if needed (optional)
-    // provider.addScope('profile');
-    // provider.addScope('email');
 
     const elements = getAuthElements();
 
     // Handle Redirect Result (for mobile flow)
     auth.getRedirectResult().then((result) => {
-        if (result.credential) {
-            // This gives you a Google Access Token.
-            // var token = result.credential.accessToken;
-        }
         if (result.user) {
             console.log("Redirect login successful:", result.user.uid);
-            showToast(`ログインしました: ${result.user.displayName}`);
+            showToast(`認証成功: ${result.user.displayName}`);
+        } else {
+            // Normal load or session restore
+            // console.log("No redirect result");
         }
     }).catch((error) => {
         console.error('Redirect auth error:', error);
-        // Specialized error handling
-        let msg = 'ログインに失敗しました';
-        if (error.code === 'auth/web-storage-unsupported') {
-            msg += ': ブラウザのCookie設定を確認してください';
-        } else if (error.code === 'auth/operation-not-supported-in-this-environment') {
-            msg += ': この環境ではサポートされていません';
-        } else {
-            msg += ': ' + error.message;
-        }
+        let msg = '認証エラー: ' + error.code;
+        if (error.message) msg += ` - ${error.message}`;
         showToast(msg);
 
         if (elements.loginBtn) {
@@ -72,12 +60,12 @@ function initAuth() {
     elements.loginBtn?.addEventListener('click', () => {
         try {
             elements.loginBtn.disabled = true;
-            elements.loginBtn.textContent = 'ログイン中...';
-            // Use Redirect for mobile support
+            elements.loginBtn.textContent = 'Googleへ移動中...';
+            showToast('Google認証画面へ移動します');
             auth.signInWithRedirect(provider);
         } catch (error) {
             console.error('Login error:', error);
-            showToast('ログイン処理の開始に失敗しました');
+            showToast('ログイン開始エラー: ' + error.message);
             elements.loginBtn.disabled = false;
             elements.loginBtn.textContent = 'Googleでログイン';
         }
@@ -88,9 +76,10 @@ function initAuth() {
         try {
             await auth.signOut();
             showToast('ログアウトしました');
+            setTimeout(() => location.reload(), 500);
         } catch (error) {
             console.error('Logout error:', error);
-            showToast('ログアウトに失敗しました');
+            showToast('ログアウト失敗: ' + error.message);
         }
     });
 
@@ -100,9 +89,14 @@ function initAuth() {
         updateAuthUI(user);
 
         if (user) {
-            // User logged in - sync data from cloud
-            await syncFromCloud();
-            showToast(`ようこそ、${user.displayName}さん！`);
+            showToast(`ログイン中: ${user.displayName}`);
+            try {
+                await syncFromCloud();
+                showToast(`同期完了: ${user.displayName}`);
+            } catch (e) {
+                console.error('Sync trigger error:', e);
+                showToast('データ同期エラー');
+            }
         }
     });
 }
