@@ -5,7 +5,7 @@
 
 const firebaseConfig = {
     apiKey: "AIzaSyBEnj3BBBDkT0pfdW6jLvJxJuC-b4FYNI0",
-    authDomain: "ao-magicianed.github.io",
+    authDomain: "aozu-ops-hub.firebaseapp.com",
     projectId: "aozu-ops-hub",
     storageBucket: "aozu-ops-hub.firebasestorage.app",
     messagingSenderId: "228102458914",
