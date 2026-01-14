@@ -20,19 +20,48 @@ function getAuthElements() {
 
 // Initialize Auth
 function initAuth() {
+    // Set persistence to LOCAL to ensure session survives redirects
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
+            console.log('Auth persistence set to LOCAL');
+        })
+        .catch((error) => {
+            console.error('Persistence error:', error);
+        });
+
     const provider = new firebase.auth.GoogleAuthProvider();
+    // Use device language for auth flow
+    auth.useDeviceLanguage();
+
+    // Add scopes if needed (optional)
+    // provider.addScope('profile');
+    // provider.addScope('email');
+
     const elements = getAuthElements();
 
     // Handle Redirect Result (for mobile flow)
-    auth.getRedirectResult().then(async (result) => {
+    auth.getRedirectResult().then((result) => {
+        if (result.credential) {
+            // This gives you a Google Access Token.
+            // var token = result.credential.accessToken;
+        }
         if (result.user) {
-            // Redirect login successful
-            console.log("Redirect login successful");
-            // Auth state observer will handle the rest
+            console.log("Redirect login successful:", result.user.uid);
+            showToast(`ログインしました: ${result.user.displayName}`);
         }
     }).catch((error) => {
         console.error('Redirect auth error:', error);
-        showToast('ログインに失敗しました: ' + error.message);
+        // Specialized error handling
+        let msg = 'ログインに失敗しました';
+        if (error.code === 'auth/web-storage-unsupported') {
+            msg += ': ブラウザのCookie設定を確認してください';
+        } else if (error.code === 'auth/operation-not-supported-in-this-environment') {
+            msg += ': この環境ではサポートされていません';
+        } else {
+            msg += ': ' + error.message;
+        }
+        showToast(msg);
+
         if (elements.loginBtn) {
             elements.loginBtn.disabled = false;
             elements.loginBtn.textContent = 'Googleでログイン';
@@ -44,7 +73,7 @@ function initAuth() {
         try {
             elements.loginBtn.disabled = true;
             elements.loginBtn.textContent = 'ログイン中...';
-            // Use Redirect instead of Popup for better mobile support
+            // Use Redirect for mobile support
             auth.signInWithRedirect(provider);
         } catch (error) {
             console.error('Login error:', error);

@@ -19,6 +19,10 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// Make globally available
+window.auth = auth;
+window.db = db;
+
 // Enable offline persistence
 db.enablePersistence().catch((err) => {
     console.warn('Firestore persistence failed:', err);
