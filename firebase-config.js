@@ -4,7 +4,7 @@
  */
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBEnj3BBBDkT0pfdW6jLvJxJuC-b4FYNIO",
+    apiKey: "AIzaSyBEnj3BBBDkT0pfdW6jLvJxJuC-b4FYNI0",
     authDomain: "aozu-ops-hub.firebaseapp.com",
     projectId: "aozu-ops-hub",
     storageBucket: "aozu-ops-hub.firebasestorage.app",
