@@ -21,18 +21,34 @@ function getAuthElements() {
 // Initialize Auth
 function initAuth() {
     const provider = new firebase.auth.GoogleAuthProvider();
-
     const elements = getAuthElements();
 
+    // Handle Redirect Result (for mobile flow)
+    auth.getRedirectResult().then(async (result) => {
+        if (result.user) {
+            // Redirect login successful
+            console.log("Redirect login successful");
+            // Auth state observer will handle the rest
+        }
+    }).catch((error) => {
+        console.error('Redirect auth error:', error);
+        showToast('ログインに失敗しました: ' + error.message);
+        if (elements.loginBtn) {
+            elements.loginBtn.disabled = false;
+            elements.loginBtn.textContent = 'Googleでログイン';
+        }
+    });
+
     // Login button handler
-    elements.loginBtn?.addEventListener('click', async () => {
+    elements.loginBtn?.addEventListener('click', () => {
         try {
             elements.loginBtn.disabled = true;
             elements.loginBtn.textContent = 'ログイン中...';
-            await auth.signInWithPopup(provider);
+            // Use Redirect instead of Popup for better mobile support
+            auth.signInWithRedirect(provider);
         } catch (error) {
             console.error('Login error:', error);
-            showToast('ログインに失敗しました');
+            showToast('ログイン処理の開始に失敗しました');
             elements.loginBtn.disabled = false;
             elements.loginBtn.textContent = 'Googleでログイン';
         }
