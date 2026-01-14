@@ -37,24 +37,26 @@ async function syncFromCloud() {
         if (doc.exists) {
             const data = doc.data();
 
+            const hasField = (field) => Object.prototype.hasOwnProperty.call(data, field);
+
             // Merge cloud data with local (cloud takes priority)
-            if (data.checklist) {
+            if (hasField('checklist')) {
                 localStorage.setItem('aozu_checklist', JSON.stringify(data.checklist));
             }
-            if (data.notes) {
+            if (hasField('notes')) {
                 localStorage.setItem('aozu_notes', data.notes);
             }
-            if (data.rulesChecked) {
+            if (hasField('rulesChecked')) {
                 localStorage.setItem('aozu_rules_checked', JSON.stringify(data.rulesChecked));
             }
-            if (data.learningLogs) {
+            if (hasField('learningLogs')) {
                 localStorage.setItem('aozu_learning_logs', JSON.stringify(data.learningLogs));
                 // Update state
                 if (window.state) {
                     window.state.learningLogs = data.learningLogs;
                 }
             }
-            if (data.userTemplates) {
+            if (hasField('userTemplates')) {
                 localStorage.setItem('aozu_user_templates', JSON.stringify(data.userTemplates));
                 // Update state
                 if (window.state) {
