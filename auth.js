@@ -6,6 +6,17 @@
 // Auth state
 let currentUser = null;
 
+// Detect iOS (Safari, Chrome on iOS, etc.)
+function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+// Detect Safari (including iOS Safari)
+function isSafari() {
+    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+}
+
 // UI Elements
 function getAuthElements() {
     return {
@@ -20,49 +31,65 @@ function getAuthElements() {
 
 // Initialize Auth
 function initAuth() {
-    // Set persistence to LOCAL to ensure session survives redirects
+    // Set persistence to LOCAL
     auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-        .then(() => {
-            console.log('Auth persistence set to LOCAL');
-        })
         .catch((error) => {
             console.error('Persistence error:', error);
-            showToast('設定エラー: ' + error.code);
         });
 
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.useDeviceLanguage();
 
     const elements = getAuthElements();
+    const usePopup = isIOS() || isSafari(); // Use popup for iOS/Safari
 
-    // Handle Redirect Result (for mobile flow)
-    auth.getRedirectResult().then((result) => {
-        if (result.user) {
-            console.log("Redirect login successful:", result.user.uid);
-            showToast(`認証成功: ${result.user.displayName}`);
-        } else {
-            // Normal load or session restore
-            // console.log("No redirect result");
-        }
-    }).catch((error) => {
-        console.error('Redirect auth error:', error);
-        let msg = '認証エラー: ' + error.code;
-        if (error.message) msg += ` - ${error.message}`;
-        showToast(msg);
-
-        if (elements.loginBtn) {
-            elements.loginBtn.disabled = false;
-            elements.loginBtn.textContent = 'Googleでログイン';
-        }
-    });
+    // Handle Redirect Result (for non-iOS flow)
+    if (!usePopup) {
+        auth.getRedirectResult().then((result) => {
+            if (result.user) {
+                console.log("Redirect login successful:", result.user.uid);
+                showToast(`認証成功: ${result.user.displayName}`);
+            }
+        }).catch((error) => {
+            console.error('Redirect auth error:', error);
+            showToast('認証エラー: ' + error.code);
+            if (elements.loginBtn) {
+                elements.loginBtn.disabled = false;
+                elements.loginBtn.textContent = 'Googleでログイン';
+            }
+        });
+    }
 
     // Login button handler
-    elements.loginBtn?.addEventListener('click', () => {
+    elements.loginBtn?.addEventListener('click', async () => {
         try {
             elements.loginBtn.disabled = true;
-            elements.loginBtn.textContent = 'Googleへ移動中...';
-            showToast('Google認証画面へ移動します');
-            auth.signInWithRedirect(provider);
+
+            if (usePopup) {
+                // iOS/Safari: Use popup
+                elements.loginBtn.textContent = 'ログイン中...';
+                showToast('ポップアップでログインします');
+                try {
+                    await auth.signInWithPopup(provider);
+                    showToast('ログイン成功！');
+                } catch (popupError) {
+                    console.error('Popup error:', popupError);
+                    if (popupError.code === 'auth/popup-blocked') {
+                        showToast('ポップアップがブロックされました。ブラウザ設定を確認してください。');
+                    } else if (popupError.code === 'auth/popup-closed-by-user') {
+                        showToast('ログインがキャンセルされました');
+                    } else {
+                        showToast('ログインエラー: ' + popupError.message);
+                    }
+                    elements.loginBtn.disabled = false;
+                    elements.loginBtn.textContent = 'Googleでログイン';
+                }
+            } else {
+                // Other browsers: Use redirect
+                elements.loginBtn.textContent = 'Googleへ移動中...';
+                showToast('Google認証画面へ移動します');
+                auth.signInWithRedirect(provider);
+            }
         } catch (error) {
             console.error('Login error:', error);
             showToast('ログイン開始エラー: ' + error.message);
@@ -92,7 +119,7 @@ function initAuth() {
             showToast(`ログイン中: ${user.displayName}`);
             try {
                 await syncFromCloud();
-                showToast(`同期完了: ${user.displayName}`);
+                showToast(`同期完了！`);
             } catch (e) {
                 console.error('Sync trigger error:', e);
                 showToast('データ同期エラー');
