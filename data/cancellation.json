@@ -1,0 +1,95 @@
+{
+    "spacee": {
+        "name": "スペイシー",
+        "note": "⚠️ 返金は手動申請。申請画面では「返金%」を入力（キャンセル料%の逆）。金額が絡むので最終確認は必ずあおさんへ！",
+        "policy": [
+            {
+                "range": "30日前〜15日前",
+                "charge": 0,
+                "refund": 100
+            },
+            {
+                "range": "14日前〜11日前",
+                "charge": 30,
+                "refund": 70
+            },
+            {
+                "range": "10日前〜4日前",
+                "charge": 50,
+                "refund": 50
+            },
+            {
+                "range": "3日前〜2日前",
+                "charge": 75,
+                "refund": 25
+            },
+            {
+                "range": "前日〜当日",
+                "charge": 100,
+                "refund": 0
+            }
+        ]
+    },
+    "instabase": {
+        "name": "インスタベース",
+        "note": "キャンセルは自動処理。返金は自動で行われますが、規定を確認しておきましょう。",
+        "policy": [
+            {
+                "range": "30日前〜15日前",
+                "charge": 0,
+                "refund": 100
+            },
+            {
+                "range": "14日前〜8日前",
+                "charge": 25,
+                "refund": 75
+            },
+            {
+                "range": "7日前〜4日前",
+                "charge": 50,
+                "refund": 50
+            },
+            {
+                "range": "3日前〜前日",
+                "charge": 75,
+                "refund": 25
+            },
+            {
+                "range": "当日",
+                "charge": 100,
+                "refund": 0
+            }
+        ]
+    },
+    "spacemarket": {
+        "name": "スペースマーケット",
+        "note": "キャンセルは自動処理。手数料を引いた金額が返金されます。",
+        "policy": [
+            {
+                "range": "30日前〜15日前",
+                "charge": 0,
+                "refund": 100
+            },
+            {
+                "range": "14日前〜8日前",
+                "charge": 25,
+                "refund": 75
+            },
+            {
+                "range": "7日前〜4日前",
+                "charge": 50,
+                "refund": 50
+            },
+            {
+                "range": "3日前〜前日",
+                "charge": 75,
+                "refund": 25
+            },
+            {
+                "range": "当日",
+                "charge": 100,
+                "refund": 0
+            }
+        ]
+    }
+}

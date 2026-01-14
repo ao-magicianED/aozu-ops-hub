@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aozu Ops Hub - あお運用ハブ</title>
+    <meta name="description" content="社内向け運用ナレッジ・テンプレート・チェックリスト">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">💜</span>
+                <h1>Aozu Ops Hub</h1>
+            </div>
+            <div class="search-container">
+                <input type="text" id="global-search" placeholder="🔍 キーワードで検索..." class="search-input">
+            </div>
+            <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <a href="#home" class="nav-link active" data-page="home">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">ホーム</span>
+        </a>
+        <a href="#sop" class="nav-link" data-page="sop">
+            <span class="nav-icon">📋</span>
+            <span class="nav-text">SOP</span>
+        </a>
+        <a href="#templates" class="nav-link" data-page="templates">
+            <span class="nav-icon">💬</span>
+            <span class="nav-text">テンプレ</span>
+        </a>
+        <a href="#calculator" class="nav-link" data-page="calculator">
+            <span class="nav-icon">🧮</span>
+            <span class="nav-text">返金計算</span>
+        </a>
+        <a href="#learning" class="nav-link" data-page="learning">
+            <span class="nav-icon">📚</span>
+            <span class="nav-text">学びログ</span>
+        </a>
+        <a href="#insights" class="nav-link" data-page="insights">
+            <span class="nav-icon">💡</span>
+            <span class="nav-text">実例集</span>
+        </a>
+        <a href="#ai" class="nav-link" data-page="ai">
+            <span class="nav-icon">🤖</span>
+            <span class="nav-text">AIプロンプト</span>
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Home Page -->
+        <section id="page-home" class="page active">
+            <div class="page-header">
+                <h2>🏠 今日のチェック</h2>
+                <p class="page-subtitle">日次確認事項と重要ルール</p>
+            </div>
+
+            <!-- Important Rules -->
+            <div class="section-card rules-section">
+                <h3 class="section-title">⚠️ 重要ルール（必読）</h3>
+                <div id="rules-container" class="rules-container">
+                    <!-- Rules loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Daily Checklist -->
+            <div class="section-card">
+                <h3 class="section-title">✅ 日次チェックリスト</h3>
+                <div id="daily-checklist" class="checklist-container">
+                    <label class="checklist-item">
+                        <input type="checkbox" data-check="msg-check">
+                        <span>📨 未対応メッセージ確認（インスタベース/スペマ/スペイシー/Airbnb/Booking）</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-check="close-check">
+                        <span>📭 未クローズ案件の確認（最後をこちらで終わらせる）</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-check="refund-check">
+                        <span>💰 返金案件の確認（スペイシーは手動申請・要あお確認）</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-check="checkin-check">
+                        <span>🔑 本日チェックインの確認・入室案内送信（12時頃に送信）</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-check="checkout-check">
+                        <span>🧹 本日チェックアウトの確認・清掃会社へ連絡</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-check="change-check">
+                        <span>🔄 変更リクエストの確認（金額変更・常連かどうかチェック）</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-check="passport-check">
+                        <span>🛂 宿泊者情報（パスポート）の受領確認</span>
+                    </label>
+                </div>
+                <button class="btn btn-secondary" id="reset-checklist">🔄 チェックをリセット</button>
+            </div>
+
+            <!-- Personal Notes -->
+            <div class="section-card">
+                <h3 class="section-title">📝 自分用メモ</h3>
+                <textarea id="personal-notes" class="notes-textarea"
+                    placeholder="今日気づいたこと、確認したいこと、次やることなど...&#10;&#10;※ このブラウザに自動保存されます"></textarea>
+                <p class="notes-hint">💾 入力内容は自動的にこのブラウザに保存されます</p>
+            </div>
+        </section>
+
+        <!-- SOP Page -->
+        <section id="page-sop" class="page">
+            <div class="page-header">
+                <h2>📋 SOP（運用手順）</h2>
+                <p class="page-subtitle">プラットフォーム別の操作方法・注意点</p>
+            </div>
+
+            <!-- Platform Filter -->
+            <div class="filter-container">
+                <button class="filter-btn active" data-platform="all">すべて</button>
+                <button class="filter-btn" data-platform="instabase">Instabase</button>
+                <button class="filter-btn" data-platform="spacemarket">Spacemarket</button>
+                <button class="filter-btn" data-platform="spacee">Spacee</button>
+                <button class="filter-btn" data-platform="airbnb">Airbnb</button>
+                <button class="filter-btn" data-platform="booking">Booking.com</button>
+            </div>
+
+            <div id="sop-container" class="sop-container">
+                <!-- SOP cards loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Templates Page -->
+        <section id="page-templates" class="page">
+            <div class="page-header">
+                <h2>💬 テンプレート集</h2>
+                <p class="page-subtitle">コピーしてすぐ使えるメッセージ</p>
+            </div>
+
+            <!-- Add Template Button -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">➕ 新しいテンプレートを追加</h3>
+                    <button class="btn btn-primary btn-small" id="toggle-template-form">📝 入力フォームを開く</button>
+                </div>
+                <form id="template-form" class="template-form hidden">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="new-tpl-title">タイトル</label>
+                            <input type="text" id="new-tpl-title" class="form-input" placeholder="例: 予約確認のお礼" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-tpl-category">カテゴリ</label>
+                            <select id="new-tpl-category" class="form-select" required>
+                                <option value="入室案内">🔑 入室案内</option>
+                                <option value="時間変更">🕐 時間変更</option>
+                                <option value="返金確認">💰 返金確認</option>
+                                <option value="レビュー依頼">⭐ レビュー依頼</option>
+                                <option value="お礼">🙏 お礼</option>
+                                <option value="お断り">❌ お断り</option>
+                                <option value="その他">📌 その他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-tpl-platform">プラットフォーム（複数選択可）</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label"><input type="checkbox" name="platform" value="共通"> 共通</label>
+                            <label class="checkbox-label"><input type="checkbox" name="platform" value="Instabase">
+                                Instabase</label>
+                            <label class="checkbox-label"><input type="checkbox" name="platform" value="Spacemarket">
+                                Spacemarket</label>
+                            <label class="checkbox-label"><input type="checkbox" name="platform" value="Spacee">
+                                Spacee</label>
+                            <label class="checkbox-label"><input type="checkbox" name="platform" value="Airbnb">
+                                Airbnb</label>
+                            <label class="checkbox-label"><input type="checkbox" name="platform" value="Booking.com">
+                                Booking.com</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-tpl-body">テンプレート本文</label>
+                        <textarea id="new-tpl-body" class="form-textarea" rows="6"
+                            placeholder="◯◯様&#10;&#10;この度はご予約いただきありがとうございます。&#10;..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-tpl-emoji">絵文字版（任意）</label>
+                        <textarea id="new-tpl-emoji" class="form-textarea" rows="4"
+                            placeholder="レビュー依頼などで検閲回避用に使う絵文字版があれば入力"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">💾 テンプレートを保存</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-template-form">キャンセル</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="filter-container">
+                <button class="filter-btn active" data-category="all">すべて</button>
+                <button class="filter-btn" data-category="入室案内">🔑 入室案内</button>
+                <button class="filter-btn" data-category="時間変更">🕐 時間変更</button>
+                <button class="filter-btn" data-category="返金確認">💰 返金確認</button>
+                <button class="filter-btn" data-category="レビュー依頼">⭐ レビュー</button>
+                <button class="filter-btn" data-category="お礼">🙏 お礼</button>
+                <button class="filter-btn" data-category="お断り">❌ お断り</button>
+            </div>
+
+            <!-- Platform Sub-Filter -->
+            <div class="filter-container sub-filter">
+                <span class="filter-label">プラットフォーム:</span>
+                <button class="filter-btn small active" data-tpl-platform="all">すべて</button>
+                <button class="filter-btn small" data-tpl-platform="共通">共通</button>
+                <button class="filter-btn small" data-tpl-platform="Instabase">Instabase</button>
+                <button class="filter-btn small" data-tpl-platform="Spacemarket">Spacemarket</button>
+                <button class="filter-btn small" data-tpl-platform="Spacee">Spacee</button>
+                <button class="filter-btn small" data-tpl-platform="Airbnb">Airbnb</button>
+                <button class="filter-btn small" data-tpl-platform="Booking.com">Booking</button>
+            </div>
+
+            <div id="templates-container" class="templates-container">
+                <!-- Templates loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Calculator Page -->
+        <section id="page-calculator" class="page">
+            <div class="page-header">
+                <h2>🧮 返金・キャンセル計算</h2>
+                <p class="page-subtitle">返金申請に入力するパーセンテージを計算</p>
+            </div>
+
+            <div class="section-card calculator-section">
+                <div class="alert alert-warning">
+                    <strong>⚠️ 重要：スペイシーの返金は手動です</strong><br>
+                    金額が絡むので<strong>最終確認は必ずあおさんへ</strong>連絡してください！<br>
+                    申請画面では「返金%」を入力します（キャンセル料%の逆の数字）
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>📌 覚え方</strong><br>
+                    キャンセル規定の「75%負担」→ 返金申請には「25%」を入力<br>
+                    <em>100 − キャンセル料% ＝ 返金申請に入力する%</em>
+                </div>
+
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="platform-select">プラットフォーム</label>
+                        <select id="platform-select" class="form-select">
+                            <option value="spacee">スペイシー（手動申請）</option>
+                            <option value="instabase">インスタベース（自動処理）</option>
+                            <option value="spacemarket">スペースマーケット（自動処理）</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="days-before">キャンセルは何日前？</label>
+                        <input type="number" id="days-before" class="form-input" min="0" max="365"
+                            placeholder="例: 3（3日前の場合）">
+                    </div>
+
+                    <button class="btn btn-primary" id="calculate-btn">🧮 計算する</button>
+                </div>
+
+                <div id="calc-result" class="calc-result hidden">
+                    <!-- Result shown here -->
+                </div>
+
+                <!-- Policy Table -->
+                <div class="policy-section">
+                    <h4>📊 キャンセル規定表</h4>
+                    <div id="policy-table-container">
+                        <!-- Table loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learning Log Page -->
+        <section id="page-learning" class="page">
+            <div class="page-header">
+                <h2>📚 学びログ</h2>
+                <p class="page-subtitle">インシデント・FAQ・気づきを記録</p>
+            </div>
+
+            <!-- Add Entry Form -->
+            <div class="section-card">
+                <h3 class="section-title">➕ 新しい学びを追加</h3>
+                <form id="learning-form" class="learning-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="log-date">📅 日付</label>
+                            <input type="date" id="log-date" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="log-platform">📱 プラットフォーム</label>
+                            <select id="log-platform" class="form-select" required>
+                                <option value="">選択してください...</option>
+                                <option value="Instabase">Instabase</option>
+                                <option value="Spacemarket">Spacemarket</option>
+                                <option value="Spacee">Spacee</option>
+                                <option value="Airbnb">Airbnb</option>
+                                <option value="Booking.com">Booking.com</option>
+                                <option value="共通">共通</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="log-category">🏷️ カテゴリ</label>
+                        <select id="log-category" class="form-select" required>
+                            <option value="民泊">🏡 民泊（Airbnb/Booking）</option>
+                            <option value="レンタルスペース">🏢 レンタルスペース</option>
+                            <option value="共通">📋 共通（全体）</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="log-incident">📌 何が起きた？（事象）</label>
+                        <input type="text" id="log-incident" class="form-input" placeholder="例: ゲストが部屋を間違えて入れなかった"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="log-action">✅ どう対応した？</label>
+                        <textarea id="log-action" class="form-textarea" placeholder="例: 部屋番号を確認する質問を送り、正しい部屋に案内した"
+                            required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="log-prevention">🔄 次回から気をつけること</label>
+                        <textarea id="log-prevention" class="form-textarea"
+                            placeholder="例: 予約時に部屋番号を強調して伝える"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label highlight">
+                            <input type="checkbox" id="log-publish">
+                            <span>💡 この学びを「実例集」にも公開する</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💾 追加する</button>
+                </form>
+            </div>
+
+            <!-- Log Entries -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">📋 記録一覧</h3>
+                    <button class="btn btn-secondary btn-small" id="export-logs">📤 JSONエクスポート</button>
+                </div>
+                <div id="learning-logs" class="learning-logs">
+                    <!-- Logs loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Insights Page -->
+        <section id="page-insights" class="page">
+            <div class="page-header">
+                <h2>💡 実例から学ぶ</h2>
+                <p class="page-subtitle">実際のやりとりから抽出した対応のコツ</p>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="tab-container">
+                <button class="tab-btn active" data-insight-cat="all">📋 すべて</button>
+                <button class="tab-btn" data-insight-cat="民泊">🏡 民泊</button>
+                <button class="tab-btn" data-insight-cat="レンタルスペース">🏢 レンタルスペース</button>
+                <button class="tab-btn" data-insight-cat="共通">🔧 共通</button>
+            </div>
+
+            <!-- Dynamic Insights from Learning Log -->
+            <div id="user-insights-container">
+                <!-- User-added insights from learning log -->
+            </div>
+
+            <!-- Built-in Insights -->
+            <div id="builtin-insights-container">
+                <!-- Case: Login Issues -->
+                <div class="section-card insights-section" data-insight-category="共通">
+                    <h3 class="section-title">🔐 ログインでつまずきやすいポイント</h3>
+
+                    <div class="insight-card">
+                        <div class="insight-title">インスタベース：ゲスト用と掲載者用アプリを間違える</div>
+                        <div class="insight-content">
+                            アプリが2種類あり、ゲスト用に入ってしまうケースが多い。<br>
+                            <strong>「Instabase for 掲載者」</strong>をダウンロードすること。
+                        </div>
+                        <div class="insight-example">
+                            💬 実例：「なんかログインできなくて💦」→ Googleアカウントではなくメール/パスワードでログイン
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">スペースマーケット：ゲスト用アプリ「Spacemarket」と間違える</div>
+                        <div class="insight-content">
+                            ホスト用は<strong>「Spacemarket for Host」</strong>という別のアプリ。<br>
+                            Googleアカウントでログイン可能。
+                        </div>
+                        <div class="insight-example">
+                            💬 実例：「これ、利用者のやつですよね💦？」→ 管理者用のアプリをDL
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">スペイシー：アプリは存在しない</div>
+                        <div class="insight-content">
+                            PCブラウザからのみアクセス可能。スマホブラウザでもログイン可。
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">Airbnb：4つのリスティングを全部登録する</div>
+                        <div class="insight-content">
+                            201短期・201マンスリー・203短期・203マンスリーの4つ。<br>
+                            全部登録しないとメッセージが見えない。
+                        </div>
+                        <div class="insight-example">
+                            💬 実例：「やってませんでした！今承認し、多分4つ全部入れたと思います！」
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case: Message Handling -->
+                <div class="section-card insights-section" data-insight-category="共通">
+                    <h3 class="section-title">💬 メッセージ対応のコツ</h3>
+
+                    <div class="insight-card">
+                        <div class="insight-title">最後は必ずこちらで締める（超重要！）</div>
+                        <div class="insight-content">
+                            相手から「ありがとうございます」と来たら、必ず返信して終わらせる。<br>
+                            スコアに影響し、掲載順位が下がる原因になる。
+                        </div>
+                        <div class="insight-example">
+                            💬 例文：「引き続きよろしくお願いいたします！」や「またのご利用をお待ちしております！」
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">謝罪は重くしすぎない</div>
+                        <div class="insight-content">
+                            「重ねてお詫び申し上げます」は状況に応じて削除。<br>
+                            過度な謝罪は逆効果になることも。
+                        </div>
+                        <div class="insight-example">
+                            ⭕ 「お詫び申し上げます」<br>
+                            ❌ 「重ねてお詫び申し上げます」（必要以上に重い印象）
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">レビュー依頼は「星5」と書かない</div>
+                        <div class="insight-content">
+                            検閲にひっかかる可能性があるため、文字で「星5」と書かない。<br>
+                            絵文字版「⭐️5」を使う。
+                        </div>
+                        <div class="insight-example">
+                            ⭕ 「⭐️5の評価をいただけますと嬉しいです🎶」<br>
+                            ❌ 「星5の評価をお願いします」
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case: Refund Handling -->
+                <div class="section-card insights-section" data-insight-category="レンタルスペース">
+                    <h3 class="section-title">💰 返金対応のポイント</h3>
+
+                    <div class="insight-card">
+                        <div class="insight-title">返金前に必ず事実確認をする</div>
+                        <div class="insight-content">
+                            「入れなかった」と言われてもすぐ返金しない。<br>
+                            部屋番号の確認、実際に入室したか等を確認する。
+                        </div>
+                        <div class="insight-example">
+                            💬 実例：「403号室で、20時近くにも中に入ったけれど人がおりました」→ 前の利用者にも確認を取る
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">スペイシーは返金%が逆！</div>
+                        <div class="insight-content">
+                            キャンセル規定は「ゲスト負担%」、申請画面は「返金%」。<br>
+                            <strong>75%負担 → 25%を入力</strong>
+                        </div>
+                        <div class="insight-example">
+                            💬 「ポリシーとは逆の数字を入れる」「いつもこれでいいですか？の確認しましょう」
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">利用後の返金は口座を聞く</div>
+                        <div class="insight-content">
+                            プラットフォーム経由の返金ができない場合、直接振込になる。<br>
+                            銀行名・支店名・口座番号・名義を確認。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case: Time Changes -->
+                <div class="section-card insights-section" data-insight-category="レンタルスペース">
+                    <h3 class="section-title">🕐 時間変更・キャンセルの判断</h3>
+
+                    <div class="insight-card">
+                        <div class="insight-title">当日の時間スライドはOK、日付変更は要注意</div>
+                        <div class="insight-content">
+                            同じ日の時間移動（例：14時→15時）は基本OK。<br>
+                            日付を変える場合はキャンセル扱いに近いので注意。
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">常連かどうかを確認する</div>
+                        <div class="insight-content">
+                            初回利用者の直前変更は基本NG。<br>
+                            常連（リピーター）なら柔軟に対応することも。
+                        </div>
+                        <div class="insight-example">
+                            💬 「この人は今回初めて？」「一回しか使ってなかったらNGにしましょう」
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">変更後にレビューをお願いする</div>
+                        <div class="insight-content">
+                            特別対応をしたときは、レビューをお願いするチャンス。
+                        </div>
+                        <div class="insight-example">
+                            💬 「本来NGですが変更させていただきました！レビュー評価いただけると励みになります」
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case: Cleaning -->
+                <div class="section-card insights-section" data-insight-category="民泊">
+                    <h3 class="section-title">🧹 清掃連絡のポイント</h3>
+
+                    <div class="insight-card">
+                        <div class="insight-title">予約確定 → 即清掃連絡、キャンセル → 即連絡</div>
+                        <div class="insight-content">
+                            民泊の予約が入ったらすぐに清掃LINEに連絡。<br>
+                            キャンセルになったときもすぐ連絡。
+                        </div>
+                        <div class="insight-example">
+                            💬 実例：清掃連絡が漏れて5000円の損失が出た
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">次の予約があるときは退出リマインド</div>
+                        <div class="insight-content">
+                            レンタルスペースで次の予約がある場合、退出時間をリマインド。
+                        </div>
+                        <div class="insight-example">
+                            💬 「本日◯時から別のお客様が入っているため、◯時までに簡易清掃と現状回復をお願いします」
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case: Airbnb Specifics -->
+                <div class="section-card insights-section" data-insight-category="民泊">
+                    <h3 class="section-title">🏡 Airbnb特有の対応</h3>
+
+                    <div class="insight-card">
+                        <div class="insight-title">フレンドリーな対応でOK</div>
+                        <div class="insight-content">
+                            Airbnbはホストとゲストの距離が近い文化。<br>
+                            スタンプを使ったり、絵文字を使ったり、ラフな感じでも大丈夫。
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">アーリーチェックインは有料オプション</div>
+                        <div class="insight-content">
+                            早い時間に入りたい場合は追加料金（例：5000円）で対応可能。<br>
+                            延長してくれた人には無料サービスにしてレビューをお願いする作戦も。
+                        </div>
+                        <div class="insight-example">
+                            💬 「本来なら一泊分追加ですが、延長もしていただいたので無料にします⭐️ その代わり評価は⭐️5でお願いしますね🎶」
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">パスポート画像が見にくければ再送依頼</div>
+                        <div class="insight-content">
+                            宿泊者情報の確認は法律で必要。<br>
+                            画像がぼやけていたら遠慮なく再送をお願いする。
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">翻訳機能は参考程度に</div>
+                        <div class="insight-content">
+                            アプリの翻訳機能は精度がイマイチ。<br>
+                            ChatGPTやGoogle翻訳を併用するのがベスト。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Prompts Page -->
+        <section id="page-ai" class="page">
+            <div class="page-header">
+                <h2>🤖 AI活用プロンプト</h2>
+                <p class="page-subtitle">ChatGPTでメッセージチェック・翻訳・調べもの</p>
+            </div>
+
+            <!-- Message Check Prompts -->
+            <div class="section-card">
+                <h3 class="section-title">✅ メッセージチェック用プロンプト</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.25rem;">
+                    作ったメッセージをChatGPTに貼り付けて、これらのプロンプトで確認してもらいましょう。
+                </p>
+
+                <div class="prompt-card">
+                    <div class="prompt-title">📝 文章全体のチェック（基本）</div>
+                    <div class="prompt-body">以下のメッセージを、レンタルスペース/民泊のホストからゲストへの返信としてチェックしてください。
+
+                        チェックポイント：
+                        - 敬語が適切か
+                        - 謝罪が重すぎないか（「重ねてお詫び」は削除推奨）
+                        - 最後がこちらで締まっているか
+                        - 誤字脱字がないか
+                        - わかりやすい文章か
+
+                        問題があれば修正版を提案してください。
+
+                        ---
+                        [ここにメッセージを貼り付け]
+                        ---</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)">📋 コピー</button>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-title">⭐ レビュー依頼チェック（検閲回避）</div>
+                    <div class="prompt-body">以下のレビュー依頼メッセージを確認してください。
+
+                        注意点：
+                        - 「星5」「★5」など文字で評価を書いていないか（検閲にひっかかる可能性）
+                        - 絵文字「⭐️5」を使うのはOK
+                        - 押しつけがましくないか
+                        - 自然な依頼になっているか
+
+                        修正が必要なら提案してください。
+
+                        ---
+                        [ここにメッセージを貼り付け]
+                        ---</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)">📋 コピー</button>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-title">🙏 謝罪文チェック（重すぎない？）</div>
+                    <div class="prompt-body">以下の謝罪メッセージをチェックしてください。
+
+                        ポイント：
+                        - 過度に謝りすぎていないか
+                        - 「重ねてお詫び」「深くお詫び」は状況に応じて削除
+                        - 事実確認と解決策が明確か
+                        - 相手が安心できる内容か
+
+                        適切な謝罪レベルに調整した版を提案してください。
+
+                        ---
+                        [ここにメッセージを貼り付け]
+                        ---</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)">📋 コピー</button>
+                </div>
+            </div>
+
+            <!-- Translation Prompts -->
+            <div class="section-card">
+                <h3 class="section-title">🌍 翻訳・多言語対応</h3>
+
+                <div class="prompt-card">
+                    <div class="prompt-title">🇬🇧 英語メッセージを日本語に</div>
+                    <div class="prompt-body">以下のAirbnbゲストからの英語メッセージを日本語に翻訳してください。
+
+                        翻訳後、以下も教えてください：
+                        - ゲストが何を求めているか（要約）
+                        - 緊急性があるか
+                        - 返信で確認すべきこと
+
+                        ---
+                        [ここに英語メッセージを貼り付け]
+                        ---</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)">📋 コピー</button>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-title">🇯🇵 日本語の返信を英語に</div>
+                    <div class="prompt-body">以下の日本語メッセージを、Airbnbのゲスト向けに自然な英語に翻訳してください。
+
+                        - フレンドリーだけど丁寧なトーンで
+                        - 絵文字は適度に残してOK
+                        - 簡潔でわかりやすく
+
+                        ---
+                        [ここに日本語メッセージを貼り付け]
+                        ---</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)">📋 コピー</button>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-title">🇨🇳 中国語ゲストへの対応</div>
+                    <div class="prompt-body">以下の日本語メッセージを中国語（簡体字）に翻訳してください。
+
+                        - 丁寧だけどフレンドリーなトーンで
+                        - 中国のゲストに自然に伝わる表現で
+
+                        ---
+                        [ここに日本語メッセージを貼り付け]
+                        ---</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)">📋 コピー</button>
+                </div>
+            </div>
+
+            <!-- Situation-based Prompts -->
+            <div class="section-card">
+                <h3 class="section-title">💡 シーン別プロンプト</h3>
+
+                <div class="prompt-card">
+                    <div class="prompt-title">🚨 クレーム対応の返信を作成</div>
+                    <div class="prompt-body">レンタルスペースのホストとして、以下のクレームに対する返信を作成してください。
+
+                        ルール：
+                        - 謝罪は必要最低限（過度に謝らない）
+                        - 事実確認を先に行う内容
+                        - 解決策を提示
+                        - 最後はこちらで締める
+
+                        状況：
+                        [ここにクレーム内容を記載]
+
+                        返信案を3パターン提案してください。</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)">📋 コピー</button>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-title">🔄 時間変更リクエストへの返信</div>
+                    <div class="prompt-body">レンタルスペースの予約時間変更リクエストへの返信を作成してください。
+
+                        状況：
+                        - ゲストの希望：[ここに記載]
+                        - 対応可否：[OK or NG]
+                        - 理由：[あれば記載]
+
+                        OKの場合：変更対応したことを伝え、レビュー依頼も添える
+                        NGの場合：丁寧にお断りする
+
+                        返信案を作成してください。</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)">📋 コピー</button>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-title">❓ 入れなかったクレームへの事実確認</div>
+                    <div class="prompt-body">「部屋に入れなかった」というクレームに対して、返金前に事実確認を行うメッセージを作成してください。
+
+                        確認すべき点：
+                        - 正しい部屋番号だったか
+                        - 実際に中に入ったか
+                        - 暗証番号は正しかったか
+                        - 何時頃の出来事か
+
+                        丁寧だけど、しっかり確認する姿勢で作成してください。</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)">📋 コピー</button>
+                </div>
+
+                <div class="prompt-card">
+                    <div class="prompt-title">📊 キャンセルポリシーの説明</div>
+                    <div class="prompt-body">レンタルスペースのキャンセルポリシーをゲストにわかりやすく説明するメッセージを作成してください。
+
+                        状況：
+                        - キャンセル日：予約日の[◯日前]
+                        - キャンセル料：[◯%]
+                        - 返金額：[◯%]
+
+                        ポイント：
+                        - 丁寧だけど明確に
+                        - 規定に基づいていることを伝える
+                        - 返金手続きの説明も含める</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)">📋 コピー</button>
+                </div>
+            </div>
+
+            <!-- Quick Tips -->
+            <div class="section-card">
+                <h3 class="section-title">⚡ ChatGPT活用のコツ</h3>
+
+                <div class="insight-card">
+                    <div class="insight-title">コピペして使うだけでOK</div>
+                    <div class="insight-content">
+                        上のプロンプトをコピー → ChatGPTに貼り付け → 自分のメッセージを追加 → 送信
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-title">「もう少し◯◯に」で調整</div>
+                    <div class="insight-content">
+                        ChatGPTの返答がイマイチなら「もう少し丁寧に」「もう少しカジュアルに」「もっと短く」と追加で指示
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-title">Airbnbの翻訳機能より精度が高い</div>
+                    <div class="insight-content">
+                        アプリ内の翻訳はイマイチ。ChatGPTやGoogle翻訳の方が自然な文章になる
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-title">「3パターン提案して」が便利</div>
+                    <div class="insight-content">
+                        返信案を複数もらって、一番良いものを選ぶのが効率的
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+        <span id="toast-message"></span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
