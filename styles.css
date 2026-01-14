@@ -1449,14 +1449,31 @@ body {
 /* Mobile auth adjustments */
 @media (max-width: 768px) {
     .auth-container {
-        position: absolute;
-        right: 60px;
+        margin-left: auto;
+        margin-right: 3rem;
+        /* Space for hamburger menu */
     }
 
-    .login-btn span,
-    .user-name,
-    .sync-status {
+    .login-btn span {
         display: none;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    .sync-status {
+        display: inline-block;
+        font-size: 0.7rem;
+        padding: 0.15rem 0.4rem;
+        max-width: 60px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .login-btn {
+        padding: 0.4rem;
     }
 
     .login-btn {
