@@ -6,15 +6,19 @@
 // Auth state
 let currentUser = null;
 
-// Detect iOS (Safari, Chrome on iOS, etc.)
-function isIOS() {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-}
+// Detect mobile device (more robust detection)
+function isMobile() {
+    // Check for touch capability
+    const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-// Detect Safari (including iOS Safari)
-function isSafari() {
-    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    // Check for mobile user agents
+    const mobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    // Check screen width
+    const smallScreen = window.innerWidth <= 768;
+
+    // Consider mobile if any of these are true
+    return hasTouch || mobileUA || smallScreen;
 }
 
 // UI Elements
@@ -41,9 +45,12 @@ function initAuth() {
     auth.useDeviceLanguage();
 
     const elements = getAuthElements();
-    const usePopup = isIOS() || isSafari(); // Use popup for iOS/Safari
 
-    // Handle Redirect Result (for non-iOS flow)
+    // ALWAYS use popup on mobile devices to avoid redirect issues
+    const usePopup = isMobile();
+    console.log('Mobile detected:', usePopup);
+
+    // Handle Redirect Result (for desktop only)
     if (!usePopup) {
         auth.getRedirectResult().then((result) => {
             if (result.user) {
@@ -66,26 +73,33 @@ function initAuth() {
             elements.loginBtn.disabled = true;
 
             if (usePopup) {
-                // iOS/Safari: Use popup
+                // Mobile: Use popup (works better than redirect on iOS)
                 elements.loginBtn.textContent = 'ログイン中...';
-                showToast('ポップアップでログインします');
+                showToast('ポップアップでログインします (モバイル)');
                 try {
-                    await auth.signInWithPopup(provider);
-                    showToast('ログイン成功！');
+                    const result = await auth.signInWithPopup(provider);
+                    if (result.user) {
+                        showToast('ログイン成功！');
+                    }
                 } catch (popupError) {
                     console.error('Popup error:', popupError);
+
+                    // Handle specific popup errors
                     if (popupError.code === 'auth/popup-blocked') {
-                        showToast('ポップアップがブロックされました。ブラウザ設定を確認してください。');
+                        showToast('ポップアップがブロックされました。設定を確認してください。');
                     } else if (popupError.code === 'auth/popup-closed-by-user') {
                         showToast('ログインがキャンセルされました');
+                    } else if (popupError.code === 'auth/cancelled-popup-request') {
+                        // This is usually okay, another popup is already open
+                        showToast('別のログイン処理が進行中です');
                     } else {
-                        showToast('ログインエラー: ' + popupError.message);
+                        showToast('ログインエラー: ' + (popupError.message || popupError.code));
                     }
                     elements.loginBtn.disabled = false;
                     elements.loginBtn.textContent = 'Googleでログイン';
                 }
             } else {
-                // Other browsers: Use redirect
+                // Desktop: Use redirect
                 elements.loginBtn.textContent = 'Googleへ移動中...';
                 showToast('Google認証画面へ移動します');
                 auth.signInWithRedirect(provider);
